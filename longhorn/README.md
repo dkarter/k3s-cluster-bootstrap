@@ -19,9 +19,9 @@ https://longhorn.k3s.pro
 
 At that point you may want to disable the control-plane storage from being used, this can be done from the UI (although there is probably a way to do it in a more declarative way as well):
 
-![](./images/CleanShot 2023-09-01 at 18.53.53@2x.png)
+![](https://user-images.githubusercontent.com/551858/265244142-185c270e-0a77-420e-8f8c-7719e5065f56.png)
 
-![](./images/CleanShot 2023-09-01 at 18.54.42@2x.png)
+![](https://user-images.githubusercontent.com/551858/265244143-ba0bd9c3-9bbe-422a-933a-09c3ee7a1d01.png)
 
 ## Making Longhorn The Default StorageClass
 
