@@ -1,0 +1,11 @@
+[master]
+k3s0
+
+[agent]
+k3s1
+k3s2
+k3s3
+
+[cluster:children]
+master
+agent

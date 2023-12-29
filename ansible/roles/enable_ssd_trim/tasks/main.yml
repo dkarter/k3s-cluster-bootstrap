@@ -1,0 +1,70 @@
+---
+- name: Check if the TRIM rule is already set in 10-trim.rules
+  ansible.builtin.shell: grep -q 'ACTION=="add|change",.*SUBSYSTEM=="scsi_disk", ATTR{provisioning_mode}="unmap"' /etc/udev/rules.d/10-trim.rules
+  register: trim_rule_exists
+  ignore_errors: true
+  changed_when: false
+  become: true
+
+- name: Set a fact to skip role tasks if rule exists
+  set_fact:
+    skip_trim_role: '{{ trim_rule_exists.rc == 0 }}'
+
+- name: Check if TRIM is supported
+  ansible.builtin.shell: 'fstrim -v /'
+  register: trim_check
+  ignore_errors: true
+  changed_when: false
+  when: not skip_trim_role
+
+- name: Install necessary utilities
+  ansible.builtin.apt:
+    name:
+      - sg3-utils
+      - lsscsi
+    state: present
+  become: true
+  when: not skip_trim_role
+
+- name: Get Maximum unmap LBA count
+  ansible.builtin.shell: |
+    sg_vpd -p bl /dev/sda | grep 'Maximum unmap LBA count' | awk '{print $NF}'
+  register: max_unmap_lba_count
+  become: true
+  when: not skip_trim_role
+
+- name: Get Logical Block Length
+  ansible.builtin.shell: |
+    sudo sg_readcap -l /dev/sda | awk -F'=' '/Logical block length/{gsub(/[^0-9]/,"",$NF); print $NF}'
+  register: logical_block_length
+  become: true
+  when: not skip_trim_role
+
+- name: Calculate discard_max_bytes value
+  set_fact:
+    discard_max_bytes: '{{ (max_unmap_lba_count.stdout | int) * (logical_block_length.stdout | int) }}'
+  when: not skip_trim_role
+
+- name: Set udev rule for discard_max_bytes
+  ansible.builtin.lineinfile:
+    path: /etc/udev/rules.d/99-maxdiscard.rules
+    line: 'ACTION=="add|change", KERNEL=="sda", SUBSYSTEM=="block", ATTR{queue/discard_max_bytes}="{{ discard_max_bytes }}"'
+    create: yes
+  become: true
+  when: not skip_trim_role
+
+- name: Get vendor and product ID
+  ansible.builtin.shell: |
+    udevadm info --query=all --name=/dev/sda | grep -E 'ID_USB_VENDOR_ID|ID_USB_MODEL_ID' | sort -r | awk -F'=' '{print $2}' | paste -sd " " -
+  register: usb_ids
+  become: true
+  when: not skip_trim_role
+
+- name: Set udev rule for TRIM
+  ansible.builtin.lineinfile:
+    path: /etc/udev/rules.d/10-trim.rules
+    line: 'ACTION=="add|change", ATTRS{idVendor}=="{{ usb_ids.stdout.split('' '')[0] }}", ATTRS{idProduct}=="{{ usb_ids.stdout.split('' '')[1] }}", SUBSYSTEM=="scsi_disk", ATTR{provisioning_mode}="unmap"'
+    create: yes
+  become: true
+  when: not skip_trim_role
+  notify: reboot

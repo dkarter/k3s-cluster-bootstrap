@@ -1,0 +1,21 @@
+---
+- name: Update apt repository
+  apt:
+    update_cache: true
+  become: true
+
+- name: Upgrade packages
+  apt:
+    upgrade: true
+  become: true
+
+- name: Upgrade packages
+  apt:
+    pkg:
+      - neovim
+      - nfs-common
+      - open-iscsi
+      - util-linux
+      - lsscsi
+      - sg3-utils
+  become: true

@@ -1,0 +1,31 @@
+---
+- name: Cluster Prep
+  hosts: cluster
+  gather_facts: true
+  become: true
+  roles:
+    - role: cgroup_memory
+    - role: apt
+    - role: hifis.unattended_upgrades
+    - role: enable_ssd_trim
+
+    # - name: Install K3s
+    #   include_tasks: ./roles/install_k3s.yml
+    #
+    # # This should use the inventory instead of explicitly listing
+    # # the inventory will also allow parallelization
+    # - name: Label Nodes as Workers with Role
+    #   shell: kubectl label nodes tpi1 tpi2 tpi3 tpi4 kubernetes.io/role=worker
+    #   run_once: true
+    #   delegate_to: localhost
+    #   environment:
+    #     KUBECOFNIG: "{{ './outputs/kubeconfig.yaml' | realpath }}"
+    #
+    # # This should use the inventory instead of explicitly listing
+    # # the inventory will also allow parallelization
+    # - name: Label Nodes as Workers with Label
+    #   shell: kubectl label nodes tpi1 tpi2 tpi3 tpi4 node-type=worker
+    #   run_once: true
+    #   delegate_to: localhost
+    #   environment:
+    #     KUBECOFNIG: "{{ './outputs/kubeconfig.yaml' | realpath }}"
