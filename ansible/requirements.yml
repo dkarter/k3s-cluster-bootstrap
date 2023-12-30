@@ -1,2 +1,7 @@
-- src: hifis.unattended_upgrades
-  version: v3.2.1
+roles:
+  - src: hifis.unattended_upgrades
+    version: v3.2.1
+
+collections:
+  - name: kubernetes.core
+    version: 3.0.0

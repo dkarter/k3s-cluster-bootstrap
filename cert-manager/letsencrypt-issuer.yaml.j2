@@ -5,7 +5,7 @@ metadata:
   namespace: cert-manager
 spec:
   acme:
-    email: letsencrypt-k3s@burnr.email
+    email: {{ email }}
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-issuer-account-key

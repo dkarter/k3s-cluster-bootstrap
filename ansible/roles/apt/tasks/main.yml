@@ -12,10 +12,11 @@
 - name: Upgrade packages
   apt:
     pkg:
+      - bat
+      - lsscsi
       - neovim
       - nfs-common
       - open-iscsi
-      - util-linux
-      - lsscsi
       - sg3-utils
+      - util-linux
   become: true

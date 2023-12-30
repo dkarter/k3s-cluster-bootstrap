@@ -1,0 +1,10 @@
+---
+- name: Cluster Prep
+  hosts: cluster
+  gather_facts: true
+  become: true
+  roles:
+    - role: cgroup_memory
+    - role: apt
+    - role: hifis.unattended_upgrades
+    - role: enable_ssd_trim

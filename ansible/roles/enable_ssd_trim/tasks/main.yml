@@ -67,4 +67,11 @@
     create: yes
   become: true
   when: not skip_trim_role
+
+- name: Enable fstrim.timer
+  ansible.builtin.systemd:
+    name: fstrim.timer
+    enabled: yes
+    state: started
+  become: true
   notify: reboot
