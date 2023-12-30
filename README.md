@@ -22,6 +22,6 @@ This repo contains K8s manifest files from one of my home lab clusters
 
 ## Services
 
-- [Memos](https://github.com/usememos/memos): A privacy-first, lightweight note-taking service.
+- [Memos](https://github.com/usememos/memos): A privacy-first, twitter-like, lightweight note-taking service.
 - [Uptime Kuma](https://github.com/louislam/uptime-kuma): Uptime Monitoring and Notifications
 
