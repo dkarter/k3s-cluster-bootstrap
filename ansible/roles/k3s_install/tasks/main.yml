@@ -1,24 +1,21 @@
 ---
-- name: Get K3S Token from local env var
-  shell: |
-    echo "$K3S_TOKEN"
-  register: k3s_token
-  changed_when: false
-  delegate_to: localhost
-  run_once: true
-
 - name: Get master ip address
   shell: |
     ip addr show eth0 | grep 'inet ' | awk '{ print $2 }' | cut -f1 -d'/'
   register: master_ip
   when: "'master' in group_names"
 
-- name: Set k3s URL for master node
+- name: Set K3s URL for master node
   set_fact:
     k3s_url: 'https://{{ master_ip.stdout }}:6443'
   when: "'master' in group_names"
 
-- name: Set k3s URL for agent nodes
+- name: Set K3s Token
+  set_fact:
+    k3s_token: "{{ lookup('community.general.onepassword', 'K3S Cluster Token', field='password', vault='Private') }}"
+  when: "'master' in group_names"
+
+- name: Set K3s URL for agent nodes
   set_fact:
     k3s_url: "{{ hostvars[groups['master'][0]]['k3s_url'] }}"
   when: "'agent' in group_names"
@@ -36,7 +33,7 @@
       --disable-cloud-controller \
       --node-ip {{ master_ip.stdout }}
   environment:
-    K3S_TOKEN: '{{ k3s_token.stdout }}'
+    K3S_TOKEN: '{{ k3s_token }}'
   when:
     - "'master' in group_names"
     - k3s_version.rc != 0
@@ -46,7 +43,7 @@
     curl -sfL https://get.k3s.io | sh -
   environment:
     K3S_URL: '{{ k3s_url }}'
-    K3S_TOKEN: '{{ k3s_token.stdout }}'
+    K3S_TOKEN: '{{ k3s_token }}'
   when:
     - "'agent' in group_names"
     - k3s_version.rc != 0
