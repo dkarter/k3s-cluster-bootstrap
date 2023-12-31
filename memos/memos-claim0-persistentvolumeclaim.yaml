@@ -1,11 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
+
 metadata:
-  creationTimestamp: null
   labels:
     io.kompose.service: memos-claim0
   name: memos-claim0
   namespace: memos
+
 spec:
   accessModes:
     - ReadWriteOnce
