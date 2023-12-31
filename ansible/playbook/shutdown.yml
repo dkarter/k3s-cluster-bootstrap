@@ -1,5 +1,5 @@
 ---
-- hosts: tpi_cluster
+- hosts: cluster
 
   tasks:
     - name: Shutdown Nodes
