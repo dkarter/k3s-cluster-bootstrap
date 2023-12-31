@@ -5,6 +5,7 @@ k3s0
 k3s1
 k3s2
 k3s3
+k3s4
 
 [cluster:children]
 master
