@@ -42,6 +42,26 @@
       vars:
         email: "{{ lookup('community.general.onepassword', 'K3s LetsEncrypt Issuer', field='email', vault='Private') }}"
 
+    - name: Force HTTPS redirect on Traefik
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: helm.cattle.io/v1
+          kind: HelmChartConfig
+          metadata:
+            name: traefik
+            namespace: kube-system
+          spec:
+            valuesContent: |-
+              ports:
+                websecure:
+                  tls:
+                    enabled: true
+                web:
+                  redirectTo: 
+                    port: websecure
+        kubeconfig: ../outputs/kubeconfig.yaml
+
     - name: Add Longhorn Helm repository
       kubernetes.core.helm_repository:
         state: present
