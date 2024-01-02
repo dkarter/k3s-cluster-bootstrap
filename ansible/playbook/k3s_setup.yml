@@ -9,6 +9,8 @@
         plugin_path: https://github.com/databus23/helm-diff
 
     - name: Add cert-manager Helm repository
+      tags:
+        - cert-manager
       kubernetes.core.helm_repository:
         state: present
         name: jetstack
@@ -16,6 +18,8 @@
         kubeconfig: ../outputs/kubeconfig.yaml
 
     - name: Install cert-manager
+      tags:
+        - cert-manager
       kubernetes.core.helm:
         state: present
         name: cert-manager
@@ -27,6 +31,8 @@
         kubeconfig: ../outputs/kubeconfig.yaml
 
     - name: Apply DigitalOcean DNS Secret
+      tags:
+        - cert-manager
       kubernetes.core.k8s:
         state: present
         template: '../../cert-manager/digitalocean-dns-secret.yaml.j2'
@@ -35,6 +41,8 @@
         access_token: "{{ lookup('community.general.onepassword', 'DigitalOcean K3s API Token', field='token', vault='Private') }}"
 
     - name: Apply LetsEncrypt Issuer
+      tags:
+        - cert-manager
       kubernetes.core.k8s:
         state: present
         template: '../../cert-manager/letsencrypt-issuer.yaml.j2'
@@ -42,7 +50,9 @@
       vars:
         email: "{{ lookup('community.general.onepassword', 'K3s LetsEncrypt Issuer', field='email', vault='Private') }}"
 
-    - name: Force HTTPS redirect on Traefik
+    - name: Configure Traefik
+      tags:
+        - traefik
       kubernetes.core.k8s:
         state: present
         definition:
@@ -57,12 +67,15 @@
                 websecure:
                   tls:
                     enabled: true
+
                 web:
                   redirectTo: 
                     port: websecure
         kubeconfig: ../outputs/kubeconfig.yaml
 
     - name: Add Longhorn Helm repository
+      tags:
+        - longhorn
       kubernetes.core.helm_repository:
         state: present
         name: longhorn
@@ -70,6 +83,8 @@
         kubeconfig: ../outputs/kubeconfig.yaml
 
     - name: Install Longhorn
+      tags:
+        - longhorn
       kubernetes.core.helm:
         state: present
         name: longhorn
@@ -82,12 +97,16 @@
         kubeconfig: ../outputs/kubeconfig.yaml
 
     - name: Apply Longhorn Ingress
+      tags:
+        - longhorn
       kubernetes.core.k8s:
         state: present
         definition: "{{ lookup('template', '../../longhorn/longhorn-ingress.yml') | from_yaml }}"
         kubeconfig: ../outputs/kubeconfig.yaml
 
     - name: Make Longhorn storage class the default
+      tags:
+        - longhorn
       kubernetes.core.k8s:
         state: patched
         kind: StorageClass
