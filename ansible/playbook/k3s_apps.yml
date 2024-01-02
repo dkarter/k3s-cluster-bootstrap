@@ -1,0 +1,18 @@
+---
+- hosts: localhost
+
+  tasks:
+    - name: Install Paperless-ngx
+      tags:
+        - paperless
+      kubernetes.core.helm:
+        state: present
+        name: paperless
+        chart_ref: ../../paperless
+        release_namespace: paperless
+        create_namespace: true
+        values:
+          PAPERLESS_ADMIN_USER: "{{ lookup('community.general.onepassword', 'K3S Paperless', field='username', vault='Private') }}"
+          PAPERLESS_ADMIN_PASSWORD: "{{ lookup('community.general.onepassword', 'K3S Paperless', field='password', vault='Private') }}"
+          PAPERLESS_SECRET_KEY: "{{ lookup('community.general.onepassword', 'K3S Paperless Server Config', field='secret_key', vault='Private') }}"
+        kubeconfig: ../outputs/kubeconfig.yaml
