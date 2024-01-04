@@ -73,7 +73,7 @@
                     enabled: true
 
                 web:
-                  redirectTo: 
+                  redirectTo:
                     port: websecure
         kubeconfig: ../outputs/kubeconfig.yaml
 
