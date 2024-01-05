@@ -1,0 +1,23 @@
+---
+- name: Configure Traefik
+  tags:
+    - traefik
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: helm.cattle.io/v1
+      kind: HelmChartConfig
+      metadata:
+        name: traefik
+        namespace: kube-system
+      spec:
+        valuesContent: |-
+          ports:
+            websecure:
+              tls:
+                enabled: true
+
+            web:
+              redirectTo:
+                port: websecure
+    kubeconfig: ../outputs/kubeconfig.yaml
