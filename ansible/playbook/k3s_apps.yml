@@ -1,3 +1,4 @@
+# vim: ft=yaml.ansible
 ---
 - name: Install Paperless-ngx
   hosts: localhost

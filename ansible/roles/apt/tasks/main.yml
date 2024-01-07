@@ -1,16 +1,17 @@
+# vim: ft=yaml.ansible
 ---
 - name: Update apt repository
-  apt:
+  ansible.builtin.apt:
     update_cache: true
   become: true
 
 - name: Upgrade packages
-  apt:
+  ansible.builtin.apt:
     upgrade: true
   become: true
 
 - name: Install packages
-  apt:
+  ansible.builtin.apt:
     pkg:
       - bat
       - lsscsi

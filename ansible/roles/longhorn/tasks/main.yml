@@ -1,3 +1,4 @@
+# vim: ft=yaml.ansible
 ---
 - name: Add Longhorn Helm repository
   kubernetes.core.helm_repository:

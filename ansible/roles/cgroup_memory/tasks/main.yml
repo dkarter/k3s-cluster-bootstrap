@@ -1,3 +1,4 @@
+# vim: ft=yaml.ansible
 ---
 - name: Enable cgroup via boot commandline if not already enabled
   ansible.builtin.lineinfile:

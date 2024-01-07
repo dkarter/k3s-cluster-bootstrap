@@ -1,49 +1,62 @@
+# vim: ft=yaml.ansible
 ---
 - name: Get master ip address
-  shell: |
+  ansible.builtin.shell: |
+    set -o pipefail
     ip addr show eth0 | grep 'inet ' | awk '{ print $2 }' | cut -f1 -d'/'
+  args:
+    executable: /bin/bash
+  changed_when: false
   register: master_ip
   when: "'master' in group_names"
 
 - name: Set K3s URL for master node
-  set_fact:
+  ansible.builtin.set_fact:
     k3s_url: 'https://{{ master_ip.stdout }}:6443'
   when: "'master' in group_names"
 
 - name: Set K3s Token
-  set_fact:
+  ansible.builtin.set_fact:
     k3s_token: "{{ lookup('community.general.onepassword', 'K3S Cluster Token', field='password', vault='Private') }}"
   when: "'master' in group_names"
 
 - name: Set K3s URL for agent nodes
-  set_fact:
+  ansible.builtin.set_fact:
     k3s_url: "{{ hostvars[groups['master'][0]]['k3s_url'] }}"
   when: "'agent' in group_names"
 
 - name: Check if K3S is already installed
-  command: k3s --version
+  ansible.builtin.command: k3s --version
   register: k3s_version
   failed_when: false
   changed_when: false
 
 - name: Install K3S Server on Master Node
-  shell: |
+  ansible.builtin.shell: |
+    set -o pipefail
     curl -sfL https://get.k3s.io | sh -s - \
       --write-kubeconfig-mode 644 \
       --disable-cloud-controller \
       --node-ip {{ master_ip.stdout }}
+  args:
+    executable: /bin/bash
   environment:
     K3S_TOKEN: '{{ k3s_token }}'
   when:
     - "'master' in group_names"
     - k3s_version.rc != 0
+  changed_when: false
 
 - name: Install K3S Agent on Agent Nodes
-  shell: |
+  ansible.builtin.shell: |
+    set -o pipefail
     curl -sfL https://get.k3s.io | sh -
+  args:
+    executable: /bin/bash
   environment:
     K3S_URL: '{{ k3s_url }}'
     K3S_TOKEN: '{{ k3s_token }}'
   when:
     - "'agent' in group_names"
     - k3s_version.rc != 0
+  changed_when: false

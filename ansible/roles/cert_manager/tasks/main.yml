@@ -1,3 +1,4 @@
+# vim: ft=yaml.ansible
 ---
 - name: Add cert-manager Helm repository
   kubernetes.core.helm_repository:

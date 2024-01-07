@@ -1,3 +1,5 @@
+# vim: ft=yaml.ansible
+---
 - name: Install Helm Chart
   kubernetes.core.helm:
     state: present

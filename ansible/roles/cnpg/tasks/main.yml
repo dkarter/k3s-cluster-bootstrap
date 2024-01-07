@@ -1,3 +1,4 @@
+# vim: ft=yaml.ansible
 ---
 - name: Add CloudNativePG Helm repository
   tags:
