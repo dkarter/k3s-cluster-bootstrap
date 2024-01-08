@@ -1,0 +1,67 @@
+# vim: ft=yaml.ansible
+---
+- name: Add ArgoCD Helm repository
+  kubernetes.core.helm_repository:
+    state: present
+    name: argo
+    repo_url: https://argoproj.github.io/argo-helm
+    kubeconfig: ../outputs/kubeconfig.yaml
+
+- name: Install ArgoCD
+  kubernetes.core.helm:
+    state: present
+    name: argo-cd
+    chart_ref: argo/argo-cd
+    release_namespace: argo-cd
+    create_namespace: true
+    values:
+      ## Globally shared configuration
+      global:
+        # Default logging options used by all components
+        logging:
+          # -- Set the global logging format. Either: `text` or `json`
+          format: json
+          # -- Set the global logging level. One of: `debug`, `info`, `warn` or `error`
+          level: info
+
+        # -- Add Prometheus scrape annotations to all metrics services. This can be used as an alternative to the ServiceMonitors.
+        addPrometheusAnnotations: true
+
+      redis-ha:
+        enabled: true
+
+      controller:
+        replicas: 1
+
+      repoServer:
+        replicas: 2
+
+      applicationSet:
+        replicas: 2
+
+      ## Server
+      server:
+        replicas: 2
+
+        ingress:
+          enabled: true
+          ingressClassName: traefik
+          annotations:
+            kubernetes.io/ingress.class: 'traefik'
+            cert-manager.io/cluster-issuer: 'letsencrypt'
+
+          hosts:
+            - 'argocd.{{ domain }}'
+
+          tls:
+            - hosts:
+                - 'argocd.{{ domain }}'
+              secretName: argocd-ingress-cert
+
+        config:
+          url: 'https://argocd.{{ domain }}'
+
+      configs:
+        params:
+          server.insecure: true
+    kubeconfig: ../outputs/kubeconfig.yaml

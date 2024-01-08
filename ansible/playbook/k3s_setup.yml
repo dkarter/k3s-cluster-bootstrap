@@ -37,3 +37,9 @@
   tags: [cnpg]
   roles:
     - role: cnpg
+
+- name: Install ArgoCD
+  hosts: localhost
+  tags: [argocd]
+  roles:
+    - role: argocd
