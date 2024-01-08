@@ -14,5 +14,40 @@
     chart_ref: prometheus-community/kube-prometheus-stack
     release_namespace: monitoring
     create_namespace: true
-    values: "{{ lookup('template', 'values.yaml') | from_yaml }}"
+    values:
+      # helm show values prometheus-community/kube-prometheus-stack | bat -l yaml
+      alertmanager:
+        ingress:
+          enabled: true
+          ingressClassName: traefik
+          annotations:
+            kubernetes.io/ingress.class: 'traefik'
+            cert-manager.io/cluster-issuer: 'letsencrypt'
+          hosts:
+            - 'alertmanager.{{ domain }}'
+          paths:
+            - /
+          pathType: Prefix
+          tls:
+            - secretName: alertmanager-ingress-cert
+              hosts:
+                - 'alertmanager.{{ domain }}'
+
+      grafana:
+        ingress:
+          enabled: true
+          ingressClassName: traefik
+          annotations:
+            kubernetes.io/ingress.class: 'traefik'
+            cert-manager.io/cluster-issuer: 'letsencrypt'
+          hosts:
+            - 'grafana.{{ domain }}'
+          paths:
+            - /
+          pathType: Prefix
+          tls:
+            - secretName: grafana-ingress-cert
+              hosts:
+                - 'grafana.{{ domain }}'
+
     kubeconfig: ../outputs/kubeconfig.yaml

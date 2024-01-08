@@ -8,7 +8,7 @@ metadata:
     cert-manager.io/cluster-issuer: 'letsencrypt'
 spec:
   rules:
-    - host: longhorn.k3s.pro
+    - host: 'longhorn.{{ domain }}'
       http:
         paths:
           - path: /
@@ -20,5 +20,5 @@ spec:
                   number: 80
   tls:
     - hosts:
-        - longhorn.k3s.pro
+        - 'longhorn.{{ domain }}'
       secretName: longhorn-ingress-cert
