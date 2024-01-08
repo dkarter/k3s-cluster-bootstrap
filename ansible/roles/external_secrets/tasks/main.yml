@@ -1,0 +1,50 @@
+# vim: ft=yaml.ansible
+---
+- name: Add 1Password Connect Helm repository
+  kubernetes.core.helm_repository:
+    state: present
+    name: 1password
+    repo_url: https://1password.github.io/connect-helm-charts/
+    kubeconfig: ../outputs/kubeconfig.yaml
+
+- name: Install 1Password Connect
+  kubernetes.core.helm:
+    state: present
+    name: connect
+    chart_ref: 1password/connect
+    release_namespace: onepassword-connect
+    create_namespace: true
+    values:
+      connect:
+        credentials_base64: "{{ lookup('community.general.onepassword', 'k3s-pro Connect Service Account', field='credentials', vault='Private') | b64encode }}"
+    kubeconfig: ../outputs/kubeconfig.yaml
+
+- name: Add External Secrets Helm repository
+  kubernetes.core.helm_repository:
+    state: present
+    name: external-secrets
+    repo_url: https://charts.external-secrets.io
+    kubeconfig: ../outputs/kubeconfig.yaml
+
+- name: Install External Secrets
+  kubernetes.core.helm:
+    state: present
+    name: external-secrets
+    chart_ref: external-secrets/external-secrets
+    release_namespace: external-secrets
+    create_namespace: true
+    kubeconfig: ../outputs/kubeconfig.yaml
+
+- name: Create 1Password Service Account Secret
+  kubernetes.core.k8s:
+    state: present
+    template: op-connect-access-token-secret.yml
+    kubeconfig: ../outputs/kubeconfig.yaml
+  vars:
+    access_token: "{{ lookup('community.general.onepassword', 'k3s-pro Access Token: op_connect_k3s_pro', field='credential', vault='Private') }}"
+
+- name: Create 1Password SecretStore
+  kubernetes.core.k8s:
+    state: present
+    template: onepassword-secret-store.yml
+    kubeconfig: ../outputs/kubeconfig.yaml

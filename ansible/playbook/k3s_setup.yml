@@ -43,3 +43,9 @@
   tags: [argocd]
   roles:
     - role: argocd
+
+- name: Install External Secrets
+  hosts: localhost
+  tags: [external-secrets]
+  roles:
+    - role: external_secrets
