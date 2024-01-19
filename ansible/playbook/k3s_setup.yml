@@ -26,12 +26,6 @@
   roles:
     - role: longhorn
 
-- name: Install CloudNativePG Cluster CRDs
-  hosts: localhost
-  tags: [cnpg]
-  roles:
-    - role: cnpg
-
 - name: Install ArgoCD
   hosts: localhost
   tags: [argocd]
