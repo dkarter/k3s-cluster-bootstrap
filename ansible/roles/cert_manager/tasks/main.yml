@@ -21,7 +21,7 @@
 - name: Apply DigitalOcean DNS Secret
   kubernetes.core.k8s:
     state: present
-    template: digitalocean-dns-secret.yaml.j2
+    template: digitalocean-dns-secret.yaml
     kubeconfig: ../outputs/kubeconfig.yaml
   vars:
     access_token: "{{ lookup('community.general.onepassword', 'DigitalOcean K3s API Token', field='token', vault='Private') }}"
@@ -29,7 +29,7 @@
 - name: Apply LetsEncrypt Issuer
   kubernetes.core.k8s:
     state: present
-    template: letsencrypt-issuer.yaml.j2
+    template: letsencrypt-issuer.yaml
     kubeconfig: ../outputs/kubeconfig.yaml
   vars:
     email: "{{ lookup('community.general.onepassword', 'K3s LetsEncrypt Issuer', field='email', vault='Private') }}"
