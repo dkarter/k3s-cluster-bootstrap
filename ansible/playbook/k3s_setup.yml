@@ -26,12 +26,6 @@
   roles:
     - role: longhorn
 
-- name: Install monitoring stack
-  hosts: localhost
-  tags: [monitoring]
-  roles:
-    - role: monitoring
-
 - name: Install CloudNativePG Cluster CRDs
   hosts: localhost
   tags: [cnpg]
