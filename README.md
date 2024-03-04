@@ -1,6 +1,7 @@
 # k3s.pro
 
-This repo contains K8s manifest files from one of my home lab clusters
+This repo contains automation scripts for bootstrapping one of my homelab
+clusters.
 
 ## Features
 
@@ -19,9 +20,3 @@ This repo contains K8s manifest files from one of my home lab clusters
 - cert-manager with ACME DNS challenge and subdomain provisioning
 - DNS managed via DigitalOcean
 - Provisioning done automatically via Ansible
-
-## Services
-
-- [Memos](https://github.com/usememos/memos): A privacy-first, twitter-like, lightweight note-taking service.
-- [Uptime Kuma](https://github.com/louislam/uptime-kuma): Uptime Monitoring and Notifications
-
