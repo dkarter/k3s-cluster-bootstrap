@@ -20,3 +20,8 @@ clusters.
 - cert-manager with ACME DNS challenge and subdomain provisioning
 - DNS managed via DigitalOcean
 - Provisioning done automatically via Ansible
+
+
+## Apps
+
+All apps can be found on the dedicated GitOps repo for this cluster: https://github.com/dkarter/k3s-cluster-apps
