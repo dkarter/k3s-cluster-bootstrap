@@ -1,10 +1,17 @@
+# vim: ft=yaml.ansible
 ---
+- name: Cluster Prep ARM
+  hosts: cluster:!x86
+  gather_facts: true
+  become: true
+  roles:
+    - role: cgroup_memory
+    - role: enable_ssd_trim
+
 - name: Cluster Prep
   hosts: cluster
   gather_facts: true
   become: true
   roles:
-    - role: cgroup_memory
     - role: apt
     - role: hifis.unattended_upgrades
-    - role: enable_ssd_trim
