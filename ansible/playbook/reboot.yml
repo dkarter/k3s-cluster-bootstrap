@@ -1,0 +1,11 @@
+# vim: ft=yaml.ansible
+---
+- name: Reboot
+  hosts: cluster
+
+  tasks:
+    - name: Reboot
+      ansible.builtin.reboot:
+        post_reboot_delay: 10
+        reboot_timeout: 120
+      become: true
