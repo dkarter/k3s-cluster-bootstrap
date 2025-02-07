@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: 3
+
+vars:
+  NODES:
+    - k3s0
+    - k3s1
+    - k3s2
+    - k3s3
+    - k3s4
+    - k3s5
+    - k3s6
+
+tasks:
+  default:
+    cmd: task -l
+    silent: true
+
+  cluster:reboot:
+    desc: Reboots all nodes
+    cmds:
+      - for:
+          var: NODES
+          as: NODE
+        task: cluster:reboot:node
+        vars: { NODE: '{{.NODE}}' }
+
+  cluster:reboot:node:
+    desc: Reboot a specific node specified with NODE or CLI args
+    summary: |
+      Reboot a specific node specified with NODE
+
+      Usage:
+        task cluster:reboot:node -- k3s6
+        # OR
+        task cluster:reboot:node NODE=k3s6
+
+    cmd: |
+      echo {{.NODE}} sudo reboot
+    vars:
+      NODE:
+        sh: echo {{default .CLI_ARGS .NODE}}
