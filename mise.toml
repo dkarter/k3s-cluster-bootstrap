@@ -1,3 +1,8 @@
 [tools]
+uv = "latest"
 ansible = "latest"
 "ubi:babs/multiping" = "latest"
+pipx = "latest"
+
+[settings]
+pipx.uvx = true
