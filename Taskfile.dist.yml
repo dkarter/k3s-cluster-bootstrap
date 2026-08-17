@@ -43,7 +43,32 @@ tasks:
         task cluster:reboot:node NODE=k3s6
 
     cmd: |
-      ssh {{.NODE}} sudo reboot now &
+      ssh -o BatchMode=yes k3s@{{.NODE}}.local sudo systemctl reboot --no-block
+    vars:
+      NODE:
+        sh: echo {{default .CLI_ARGS .NODE}}
+
+  cluster:shutdown:
+    desc: Shuts down all nodes
+    cmds:
+      - for:
+          var: NODES
+          as: NODE
+        task: cluster:shutdown:node
+        vars: { NODE: '{{.NODE}}' }
+
+  cluster:shutdown:node:
+    desc: Shut down a specific node specified with NODE or CLI args
+    summary: |
+      Shut down a specific node specified with NODE
+
+      Usage:
+        task cluster:shutdown:node -- k3s6
+        # OR
+        task cluster:shutdown:node NODE=k3s6
+
+    cmd: |
+      ssh -o BatchMode=yes k3s@{{.NODE}}.local sudo systemctl poweroff --no-block
     vars:
       NODE:
         sh: echo {{default .CLI_ARGS .NODE}}
