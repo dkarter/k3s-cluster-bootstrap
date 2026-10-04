@@ -8,6 +8,9 @@
     kubeconfig: ../outputs/kubeconfig.yaml
 
 - name: Install 1Password Connect
+  no_log: true
+  vars:
+    connect_credentials_source: "{{ lookup('community.general.onepassword', 'k3s-pro Connect Service Account', field='credentials', vault='Private') | trim }}"
   kubernetes.core.helm:
     state: present
     name: connect
@@ -16,7 +19,9 @@
     create_namespace: true
     values:
       connect:
-        credentials_base64: "{{ lookup('community.general.onepassword', 'k3s-pro Connect Service Account', field='credentials', vault='Private') | b64encode }}"
+        # The chart mounts this Secret as a JSON file. Accept legacy base64
+        # input, validate the JSON, and let Helm perform Kubernetes encoding.
+        credentials: "{{ (connect_credentials_source if connect_credentials_source.startswith('{') else (connect_credentials_source | b64decode)) | from_json | to_json }}"
     kubeconfig: ../outputs/kubeconfig.yaml
 
 - name: Add External Secrets Helm repository
