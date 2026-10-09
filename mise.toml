@@ -1,7 +1,7 @@
 [tools]
 uv = "latest"
 ansible = "latest"
-"ubi:babs/multiping" = "latest"
+"github:babs/multiping" = "latest"
 pipx = "latest"
 
 [settings]
